@@ -1,4 +1,4 @@
-This is the full pipeline for my experiment, estimating mutual information in clinical spontaneous speech.
+This is the full pipeline for my experiment, estimating mutual information in clinical spontaneous speech. 
 This repo applies the lightning-hydra repo structure and regression modules originally applied in https://github.com/Chief-Buka/contextual-redundancy
 
 The repo is configured for using 4 distinct datasets (3 corpora from Discourse and 1 from DAIC-WOZ), why we have dataset specific notebooks (TANG, UWO, TOPSY and DAIC)
