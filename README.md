@@ -1,4 +1,4 @@
-# Clinical Contextual Redundancy - Thesis project
+### Clinical Contextual Redundancy - Thesis project
 
 This is the full pipeline for my experiment, estimating mutual information in clinical spontaneous speech.
 
@@ -19,7 +19,7 @@ This assumes that you store your data in per-speaker folders, containing full au
 If working with multiple datasets, repeat steps 2–5 per dataset.
 
 
-# 1. Create environment for audio processing and prosodic feature extraction
+### 1. Create environment for audio processing and prosodic feature extraction
 
 ```bash
 conda create -n extraction python=3.10
@@ -36,7 +36,7 @@ conda install -c conda-forge montreal-forced-aligner
 Then we can run the notebooks — adjust paths to data as needed.
 
 
-# 2. Chunk audio files and transcripts into audio chunks of 5–25 seconds
+### 2. Chunk audio files and transcripts into audio chunks of 5–25 seconds
 
 Notebook:
 
@@ -55,7 +55,7 @@ speakerID_utteranceID.wav
 
 This also creates a log file over utterances not used and the reason why (e.g. too long, few words).
 
-## 2.5 Optional: Whisper retranscription
+### 2.5 Optional: Whisper retranscription
 
 If transcriptions are not good enough, run:
 
@@ -68,7 +68,7 @@ on the chunks.
 The notebook is configured to include disfluencies as much as possible for better alignment in the next step.
 
 
-# 3. Forced align the chunks using MFA
+### 3. Forced align the chunks using MFA
 
 Make sure to download corresponding MFA language models and dictionaries and place these in the full `audio_chunked` root repo.
 
@@ -91,7 +91,7 @@ mfa align dataset_name english_us_mfa.dict english_mfa.zip dataset_name_output
 After alignment, move TextGrids into corresponding utterance audio folders.
 
 
-# 4. Create train/test/validation splits
+### 4. Create train/test/validation splits
 
 Run:
 
@@ -114,7 +114,7 @@ The notebook currently includes:
 for labeling psychosis and depression, but more can be added.
 
 
-# 5. Sort data into correct structure
+### 5. Sort data into correct structure
 
 Run:
 
@@ -125,7 +125,7 @@ Data/DAIC-WOZ/organize_data.ipynb
 based on splits created.
 
 
-# 6. Run prosodic feature extraction
+### 6. Run prosodic feature extraction
 
 Run:
 
@@ -142,7 +142,7 @@ This will create a CSV with all extracted feature values in each column (optiona
 This step can take several hours.
 
 
-# 7. Concatenate datasets and generate PKL/YAML configs
+### 7. Concatenate datasets and generate PKL/YAML configs
 
 Once prosodic feature extraction has been performed for all datasets, run:
 
@@ -158,7 +158,7 @@ This will:
 4. Create config YAML files in correct contextual-redundancy folders, allowing for model regression
 
 
-# 8. Create environment for training
+### 8. Create environment for training
 
 ```bash
 conda create -n prosody python=3.10
@@ -171,9 +171,9 @@ pip install -r training_reqs.txt
 ```
 
 
-# 9. Model regression
+### 9. Model regression
 
-## Initial trial run
+**Initial trial run**
 
 To see if everything is working, you can do an initial trial run for a feature (e.g. Duration):
 
@@ -181,7 +181,7 @@ To see if everything is working, you can do an initial trial run for a feature (
 TOKENIZERS_PARALLELISM=false python -m src.train experiment=emnlp/finetuning/duration_finetuning trainer.max_epochs=1 trainer.accumulate_grad_batches=1 +trainer.limit_train_batches=5 +trainer.limit_val_batches=2 +trainer.limit_test_batches=2
 ```
 
-## Full training
+**Full training**
 
 ```bash
 TOKENIZERS_PARALLELISM=false python -m src.train experiment=emnlp/finetuning/duration_finetuning
@@ -189,7 +189,7 @@ TOKENIZERS_PARALLELISM=false python -m src.train experiment=emnlp/finetuning/dur
 
 Then run for every feature.
 
-## Testing individual test splits
+**Testing individual test splits**
 
 For example depressive speech:
 
@@ -200,7 +200,7 @@ TOKENIZERS_PARALLELISM=false python -m src.train experiment=emnlp/finetuning/dur
 This loads the best model checkpoint from training and performs testing only.
 
 
-# 10. Compute mutual information
+### 10. Compute mutual information
 
 Run:
 
@@ -221,7 +221,7 @@ MI = unconditional entropy - conditional entropy
 4. Visualize the time-scale of mutual information in heatmaps
 
 
-# 11. Done
+### 11. Done!
 
 You can use:
 
@@ -232,10 +232,10 @@ data_summary.ipynb
 for statistics of the data used.
 
 
-# Changes to the original repository 
+**Changes to the original repository** 
 https://github.com/Chief-Buka/contextual-redundancy
 
-## Added / modified functionality
+**Added / modified:**
 
 - New plotting notebook computing differential entropy using parametric distributions
 - New notebook for estimating differential unconditional entropy using KDE
