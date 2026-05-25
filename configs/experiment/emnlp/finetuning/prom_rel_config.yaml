@@ -1,0 +1,42 @@
+# @package _global_
+defaults:
+  - override /data: prom_rel_custom.yaml 
+  - override /model_task: token_tagging_regressor_mle.yaml
+  - override /callbacks: prominence_regression.yaml
+  - override /logger: many_loggers.yaml
+  - override /trainer: gpu.yaml
+
+tags: ["bert-large-cased", "prosody", "regression"]
+
+seed: 12345
+
+trainer:
+  min_epochs: 1
+  max_epochs: 50
+  gradient_clip_val: 1
+  precision: 16
+  accumulate_grad_batches: 8
+
+model_task:
+  huggingface_model: bert-large-cased
+  num_labels: 1
+  optimizer:
+    lr: 0.00005
+    weight_decay: 0.1
+  scheduler:
+    patience: 2
+
+callbacks:
+  early_stopping:
+    patience: 3
+
+data:
+  model_name: bert-large-cased
+  data_dir: D:/thesis_data/prosodic_features_splits/prom_rel
+  train_file: train.pkl
+  val_file: val.pkl
+  test_file: test.pkl
+  batch_size: 32
+  score_last_token: True
+  relative_to_mean: False # already computed by z-scoring in feature extraction
+  word_stats_path: null # this needs libriTTS labeling - not relevant for my data

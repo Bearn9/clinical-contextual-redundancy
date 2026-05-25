@@ -1,0 +1,36 @@
+# @package _global_
+defaults:
+- override /data: pitch_datamodule.yaml
+- override /model_task: token_tagging_vector_regressor_mle_cm.yaml
+- override /callbacks: prominence_regression.yaml
+- override /logger: many_loggers.yaml
+- override /trainer: gpu.yaml
+- override /hydra/job_logging: default
+- override /hydra/hydra_logging: default
+tags:
+- bert-base-cased
+- prosody
+- regression
+- pitch
+seed: 12345
+trainer:
+  min_epochs: 1
+  max_epochs: 50
+  gradient_clip_val: 1
+  precision: 16-mixed
+  accumulate_grad_batches: 1
+model_task:
+  huggingface_model: bert-base-cased
+  num_labels: 4
+  freeze_lm: false
+  use_mlp: false
+  p_dropout: 0.1
+  loss_dir: ./losses_cm_CLEAN/f0_dct
+  optimizer:
+    lr: 3.0e-06
+    weight_decay: 0.002
+  scheduler:
+    patience: 2
+callbacks:
+  early_stopping:
+    patience: 4

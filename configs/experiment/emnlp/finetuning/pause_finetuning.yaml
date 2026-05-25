@@ -1,0 +1,36 @@
+# @package _global_
+defaults:
+- override /data: pause_datamodule.yaml
+- override /model_task: token_tagging_regressor_pause_mle_cm.yaml
+- override /callbacks: prominence_regression.yaml
+- override /logger: many_loggers.yaml
+- override /trainer: gpu.yaml
+- override /hydra/job_logging: default
+- override /hydra/hydra_logging: default
+tags:
+- bert-large-cased
+- prosody
+- regression
+- pause
+seed: 12345
+trainer:
+  min_epochs: 1
+  max_epochs: 50
+  gradient_clip_val: 1
+  precision: 16-mixed
+  accumulate_grad_batches: 1
+model_task:
+  huggingface_model: bert-large-cased
+  num_labels: 1
+  freeze_lm: false
+  use_mlp: false
+  p_dropout: 0.1
+  loss_dir: ./losses_cm_CLEAN/pause
+  optimizer:
+    lr: 3.0e-06
+    weight_decay: 0.002
+  scheduler:
+    patience: 2
+callbacks:
+  early_stopping:
+    patience: 4

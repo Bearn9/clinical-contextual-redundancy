@@ -1,0 +1,23 @@
+_target_: src.models.token_tagging_vector_regressor_mle_cm.TokenTaggingVectorRegressorMLE
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 5.0e-05
+  weight_decay: 0.1
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.ReduceLROnPlateau
+  _partial_: true
+  mode: min
+  factor: 0.5
+  patience: 2
+
+huggingface_model: bert-large-cased
+freeze_lm: false
+num_labels: 4
+
+use_mlp: false
+
+output_activation:
+  _target_: torch.nn.Identity
