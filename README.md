@@ -1,13 +1,12 @@
 ### Clinical Contextual Redundancy - Thesis project
 
-This is the full pipeline for my experiment, estimating mutual information in clinical spontaneous speech.
+This is the full experiment pipeline for my thesis project, estimating mutual information in clinical spontaneous speech.
 
-This repo applies the lightning-hydra repo structure and regression modules originally applied in:
+This repo consists primarily of notebooks that utilize the lightning-hydra repo structure and modules, originally from:
 
 https://github.com/Chief-Buka/contextual-redundancy
 
 The repo is configured for using 4 distinct datasets (3 corpora from Discourse and 1 from DAIC-WOZ), why we have dataset specific notebooks (TANG, UWO, TOPSY and DAIC).
-
 For the pipeline breakdown, we'll just use DAIC-WOZ as an example.
 
 This assumes that you store your data in per-speaker folders, containing full audio files and transcriptions, under:
@@ -55,15 +54,9 @@ speakerID_utteranceID.wav
 
 This also creates a log file over utterances not used and the reason why (e.g. too long, few words).
 
-### 2.5 Optional: Whisper retranscription
+**2.5 Whisper retranscription**
 
-If transcriptions are not good enough, run:
-
-```text
-/Data/whisper_transcription.ipynb
-```
-
-on the chunks.
+If transcriptions are not good enough, run /Data/whisper_transcription.ipynb on the chunks.
 
 The notebook is configured to include disfluencies as much as possible for better alignment in the next step.
 
@@ -93,25 +86,14 @@ After alignment, move TextGrids into corresponding utterance audio folders.
 
 ### 4. Create train/test/validation splits
 
-Run:
-
-```text
-Data/DAIC-WOZ/create_splits_DAIC.ipynb
-```
-
-on the assigned data repo.
+Run Data/DAIC-WOZ/create_splits_DAIC.ipynb on the assigned data repo.
 
 This is done based on:
 - speakers
 - mental health
 - overall audio duration
 
-The notebook currently includes:
-- CDS
-- PANSS-8/10
-- PHQ-8
-
-for labeling psychosis and depression, but more can be added.
+The notebook currently includes CDS, PANSS-8/10 and PHQ-8 for labeling psychosis and depression, but more can be added.
 
 
 ### 5. Sort data into correct structure
@@ -223,49 +205,4 @@ MI = unconditional entropy - conditional entropy
 
 ### 11. Done!
 
-You can use:
-
-```text
-data_summary.ipynb
-```
-
-for statistics of the data used.
-
-
-**Changes to the original repository** 
-https://github.com/Chief-Buka/contextual-redundancy
-
-**Added / modified:**
-
-- New plotting notebook computing differential entropy using parametric distributions
-- New notebook for estimating differential unconditional entropy using KDE
-  - Use this for more robustness
-  - Not applied in the current repo setup
-  - Can take several hours
-- Added feature extraction notebook utilizing modules in the original repo for new data
-- Added a new `custom_pickle_datamodule`, allowing new extracted data to be passed to model regression
-- Added notebook for generating `.pkl` files using generated dataframes
-- This notebook also generates:
-  - new `finetuning.yaml` files in:
-    ```text
-    configs/experiment/emnlp/finetuning
-    ```
-  - new `_datamodule.yaml` files in:
-    ```text
-    configs/data/
-    ```
-- All `TokenTaggingRegressor` files:
-  - changed AdamW imports to `torch.optim`
-  - commented out `memory_profiler` imports
-- Added settings generating 4 context windows per utterance to better utilize limited data
-- `torch_metrics.py` and `torch_metrics_cm.py`
-  - updated `MaskedPearsonCorrCoeff`
-  - removed dependency on local helper functions due to dependency conflicts
-- Updated requirements:
-  - split into:
-    ```text
-    audio_reqs.txt
-    training_reqs.txt
-    ```
-  - allowing use of 2 separate environments
-- Added data summary notebook for producing statistics on the data
+You can use data_summary.ipynb for statistics of the data used.
