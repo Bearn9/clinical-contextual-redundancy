@@ -37,13 +37,16 @@ Then we can run the notebooks — adjust paths to data as needed.
 
 ### 2. Chunk audio files and transcripts into audio chunks of 5–25 seconds
 
-Notebook:
+Notebooks found in both Data/DAIC-WOZ and Data/discourse:
 
 ```text
 audio_segmenting.ipynb
 ```
 
 This notebook will use timestamps in the transcript file (`.cha`, `.txt` or `.csv`) to create audio chunks from arguments assigned at the start of the notebook.
+
+If your transcriptions are sufficient, opt for the discourse version which will also generate .txt transcriptions per chunk to be used for forced alignment.
+The daic version instead only chunks and relies on step 2.5 to generate .txt transcriptions
 
 Chunks will be stored with cleaned transcripts in speaker specific folders with an utteranceID suffix:
 
@@ -56,7 +59,7 @@ This also creates a log file over utterances not used and the reason why (e.g. t
 
 **2.5 Whisper retranscription**
 
-If transcriptions are not good enough, run /Data/whisper_transcription.ipynb on the chunks.
+If transcriptions are not good enough, run /Data/DAIC-WOZ/whisper_transcription.ipynb on the chunks.
 
 The notebook is configured to include disfluencies as much as possible for better alignment in the next step.
 
@@ -93,26 +96,17 @@ This is done based on:
 - mental health
 - overall audio duration
 
-The notebook currently includes CDS, PANSS-8/10 and PHQ-8 for labeling psychosis and depression, but more can be added.
+The notebook currently includes CDS, PANSS-8/10 and PHQ-8 for labeling psychosis and depression, but more can be added. 
+
+It utilizes the metadata file for the dataset and includes this in the generated splits.csv file to be used in the next step
 
 
-### 5. Sort data into correct structure
-
-Run:
-
-```text
-Data/DAIC-WOZ/organize_data.ipynb
-```
-
-based on splits created.
-
-
-### 6. Run prosodic feature extraction
+### 5. Run prosodic feature extraction
 
 Run:
 
 ```text
-prosodic_feature_extraction.ipynb
+feature_extraction.ipynb
 ```
 
 This requires:
@@ -124,7 +118,7 @@ This will create a CSV with all extracted feature values in each column (optiona
 This step can take several hours.
 
 
-### 7. Concatenate datasets and generate PKL/YAML configs
+### 6. Concatenate datasets and generate PKL/YAML configs
 
 Once prosodic feature extraction has been performed for all datasets, run:
 
@@ -135,12 +129,12 @@ concat_dfs_to_pkl_and_yaml.ipynb
 This will:
 
 1. Concatenate all distinct dataset pandas dataframes
-2. Create `.pkl` dataset files for every feature, based on train/test/val splits
+2. Create `.pkl` dataset files for every feature, based on train/test/val splits amd sort these into correct folder structure
 3. Create additional `test.pkl` files based on mental health status encoded in `utterance_id` in steps 4 & 5
 4. Create config YAML files in correct contextual-redundancy folders, allowing for model regression
 
 
-### 8. Create environment for training
+### 7. Create environment for training
 
 ```bash
 conda create -n prosody python=3.10
@@ -153,7 +147,7 @@ pip install -r training_reqs.txt
 ```
 
 
-### 9. Model regression
+### 8. Model regression
 
 **Initial trial run**
 
@@ -182,7 +176,7 @@ TOKENIZERS_PARALLELISM=false python -m src.train experiment=emnlp/finetuning/dur
 This loads the best model checkpoint from training and performs testing only.
 
 
-### 10. Compute mutual information
+### 9. Compute mutual information
 
 Run:
 
@@ -203,6 +197,6 @@ MI = unconditional entropy - conditional entropy
 4. Visualize the time-scale of mutual information in heatmaps
 
 
-### 11. Done!
+### 10. Done!
 
 You can use data_summary.ipynb for statistics of the data used.
